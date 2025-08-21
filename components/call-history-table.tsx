@@ -9,15 +9,9 @@ import {
   FileText,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { FullTranscriptModal } from "./full-transcript-modal";
 import { AudioModalButtons } from "./audio-modal";
+import { MultiSelect } from "./multi-select";
 
 const callHistoryData = [
   {
@@ -82,8 +76,25 @@ const callHistoryData = [
   },
 ];
 
+const ModelOptions = [
+  { value: "vehicles", label: "Vehicles" },
+  { value: "parts", label: "Parts" },
+  { value: "leasing", label: "Leasing" },
+  { value: "repair", label: "Repair" },
+];
+
+const CallStatusOptions = [
+  { value: "live-agent", label: "Live Agent" },
+  { value: "abandoned", label: "Abandoned" },
+  { value: "elead", label: "eLead" },
+];
+
 export default function CallHistoryTable() {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [selectedModelOptions, setSelectedModelOptions] = useState<string[]>(
+    []
+  );
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [callHistoryFilters, setCallHistoryFilters] = useState({
     dateFrom: "",
     dateTo: "",
@@ -106,7 +117,7 @@ export default function CallHistoryTable() {
           <Filter className="h-5 w-5 text-slate-600" />
           <h3 className="text-lg font-bold text-slate-800">Filters</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Date From
@@ -173,66 +184,23 @@ export default function CallHistoryTable() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Live Agent
+              Conversation Outcome
             </label>
-            <Select
-              value={callHistoryFilters.liveAgentTransfer}
-              onValueChange={(value) =>
-                setCallHistoryFilters((prev) => ({
-                  ...prev,
-                  liveAgentTransfer: value,
-                }))
-              }
-            >
-              <SelectTrigger className="text-sm  w-full">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="Y">Yes</SelectItem>
-                <SelectItem value="N">No</SelectItem>
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={CallStatusOptions}
+              onChange={setSelectedOptions}
+              value={selectedOptions}
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Abandoned
+              Model
             </label>
-            <Select
-              value={callHistoryFilters.abandoned}
-              onValueChange={(value) =>
-                setCallHistoryFilters((prev) => ({ ...prev, abandoned: value }))
-              }
-            >
-              <SelectTrigger className="text-sm  w-full">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="Y">Yes</SelectItem>
-                <SelectItem value="N">No</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              eLead
-            </label>
-            <Select
-              value={callHistoryFilters.eLead}
-              onValueChange={(value) =>
-                setCallHistoryFilters((prev) => ({ ...prev, eLead: value }))
-              }
-            >
-              <SelectTrigger className="text-sm w-full">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="Y">Yes</SelectItem>
-                <SelectItem value="N">No</SelectItem>
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={ModelOptions}
+              onChange={setSelectedModelOptions}
+              value={selectedModelOptions}
+            />
           </div>
         </div>
       </div>
