@@ -90,7 +90,6 @@ const analyticsData = [
 const redirectionData = [
     { name: "Service", value: 342, color: "#f59e0b", percentage: 27.4 },
     { name: "Finance/Lease", value: 298, color: "#10b981", percentage: 23.9 },
-    { name: "Sales", value: 234, color: "#3b82f6", percentage: 18.8 },
     { name: "Parts", value: 189, color: "#8b5cf6", percentage: 15.2 },
     { name: "General Inquiry", value: 184, color: "#ef4444", percentage: 14.7 },
 ];
