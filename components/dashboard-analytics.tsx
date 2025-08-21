@@ -34,6 +34,53 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+interface DashboardAnalyticsProps {
+    selectedBrand: string;
+    selectedBranch: string;
+}
+
+const generateDynamicData = (brand: string, branch: string) => {
+    // Base multipliers for different brands
+    const brandMultipliers: { [key: string]: number } = {
+        Chevrolet: 1.0,
+        Ford: 1.2,
+        Toyota: 0.9,
+        Honda: 0.8,
+    };
+
+    // Base multipliers for different branches
+    const branchMultipliers: { [key: string]: number } = {
+        "New York": 1.0,
+        "Los Angeles": 1.3,
+        Chicago: 0.9,
+        Miami: 1.1,
+        Dallas: 1.0,
+        Seattle: 0.8,
+        Boston: 0.9,
+        Denver: 0.7,
+        Phoenix: 1.1,
+        Atlanta: 1.0,
+        Portland: 0.6,
+        Austin: 0.9,
+    };
+
+    const brandMultiplier = brandMultipliers[brand] || 1.0;
+    const branchMultiplier = branchMultipliers[branch] || 1.0;
+    const totalMultiplier = brandMultiplier * branchMultiplier;
+
+    return {
+        totalCalls: Math.round(1247 * totalMultiplier),
+        testDriveRedirects: Math.round(342 * totalMultiplier),
+        storeTransfers: Math.round(298 * totalMultiplier),
+        closedWithoutTestDrive: Math.round(156 * totalMultiplier),
+        earlyClosures: Math.round(89 * totalMultiplier),
+        ahtTime: (4.2 * (1 + (totalMultiplier - 1) * 0.3)).toFixed(1),
+        npsScore: (8.1 + (totalMultiplier - 1) * 0.5).toFixed(1),
+        escalations: Math.round(158 * totalMultiplier),
+        fallouts: Math.round(87 * totalMultiplier),
+    };
+};
+
 const analyticsData = [
     {
         title: "Total vs Agent Transfers",
@@ -90,6 +137,7 @@ const analyticsData = [
 const redirectionData = [
     { name: "Service", value: 342, color: "#f59e0b", percentage: 27.4 },
     { name: "Finance/Lease", value: 298, color: "#10b981", percentage: 23.9 },
+    { name: "Sales", value: 234, color: "#3b82f6", percentage: 18.8 },
     { name: "Parts", value: 189, color: "#8b5cf6", percentage: 15.2 },
     { name: "General Inquiry", value: 184, color: "#ef4444", percentage: 14.7 },
 ];
@@ -144,17 +192,23 @@ const telemetryData = {
     },
 };
 
-export default function DashboardAnalytics() {
+export default function DashboardAnalytics({
+    selectedBrand,
+    selectedBranch,
+}: DashboardAnalyticsProps) {
+    const dynamicData = generateDynamicData(selectedBrand, selectedBranch);
+
     return (
         <div className="space-y-6">
-            {/* Overview stats section */}
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
                 <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
                     <div className="flex items-center justify-between mb-2">
                         <Phone className="h-8 w-8 text-blue-100" />
                         <div className="text-blue-200 text-xs">+15%</div>
                     </div>
-                    <div className="text-3xl font-bold">1,247</div>
+                    <div className="text-3xl font-bold">
+                        {dynamicData.totalCalls.toLocaleString()}
+                    </div>
                     <div className="text-blue-100 text-sm font-medium">
                         Total Calls
                     </div>
@@ -165,7 +219,9 @@ export default function DashboardAnalytics() {
                         <Car className="h-8 w-8 text-emerald-100" />
                         <div className="text-emerald-200 text-xs">+8%</div>
                     </div>
-                    <div className="text-3xl font-bold">342</div>
+                    <div className="text-3xl font-bold">
+                        {dynamicData.testDriveRedirects.toLocaleString()}
+                    </div>
                     <div className="text-emerald-100 text-sm font-medium">
                         Test Drive Redirects
                     </div>
@@ -176,7 +232,9 @@ export default function DashboardAnalytics() {
                         <Building2 className="h-8 w-8 text-amber-100" />
                         <div className="text-amber-200 text-xs">+12%</div>
                     </div>
-                    <div className="text-3xl font-bold">298</div>
+                    <div className="text-3xl font-bold">
+                        {dynamicData.storeTransfers.toLocaleString()}
+                    </div>
                     <div className="text-amber-100 text-sm font-medium">
                         Store Transfers
                     </div>
@@ -187,7 +245,9 @@ export default function DashboardAnalytics() {
                         <PhoneOff className="h-8 w-8 text-red-100" />
                         <div className="text-red-200 text-xs">-5%</div>
                     </div>
-                    <div className="text-3xl font-bold">156</div>
+                    <div className="text-3xl font-bold">
+                        {dynamicData.closedWithoutTestDrive.toLocaleString()}
+                    </div>
                     <div className="text-red-100 text-sm font-medium">
                         Closed w/o Test Drive
                     </div>
@@ -198,7 +258,9 @@ export default function DashboardAnalytics() {
                         <UserX className="h-8 w-8 text-purple-100" />
                         <div className="text-purple-200 text-xs">-3%</div>
                     </div>
-                    <div className="text-3xl font-bold">89</div>
+                    <div className="text-3xl font-bold">
+                        {dynamicData.earlyClosures.toLocaleString()}
+                    </div>
                     <div className="text-purple-100 text-sm font-medium">
                         Early Closures
                     </div>
@@ -212,7 +274,9 @@ export default function DashboardAnalytics() {
                         <Users className="h-5 w-5 text-slate-600" />
                         Call Redirections by Category
                     </h3>
-                    <div className="text-xs text-slate-600">Last 30 days</div>
+                    <div className="text-xs text-slate-600">
+                        Last 30 days • {selectedBrand} - {selectedBranch}
+                    </div>
                 </div>
 
                 <div className="flex items-center gap-6">
@@ -255,14 +319,14 @@ export default function DashboardAnalytics() {
                                                 const data = payload[0].payload;
                                                 return (
                                                     <div className="bg-white p-2 border border-slate-200 rounded-lg shadow-lg">
-                                                        <p className="font-semibold text-slate-800 text-sm">
+                                                        <p className="font-semibold text-slate-800">
                                                             {data.name}
                                                         </p>
-                                                        <p className="text-slate-600 text-xs">
+                                                        <p className="text-slate-600">
                                                             Calls:{" "}
                                                             {data.value.toLocaleString()}
                                                         </p>
-                                                        <p className="text-slate-600 text-xs">
+                                                        <p className="text-slate-600">
                                                             Percentage:{" "}
                                                             {data.percentage}%
                                                         </p>
@@ -310,6 +374,9 @@ export default function DashboardAnalytics() {
                         Call Telemetry & Trends
                     </h3>
                     <div className="flex items-center gap-3">
+                        <div className="text-xs text-slate-600">
+                            {selectedBrand} - {selectedBranch}
+                        </div>
                         <Select defaultValue="week">
                             <SelectTrigger className="w-32 h-8 text-xs">
                                 <SelectValue />
@@ -327,7 +394,6 @@ export default function DashboardAnalytics() {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
-                    {/* AHT Metric */}
                     <div className="border border-slate-100 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
@@ -341,7 +407,7 @@ export default function DashboardAnalytics() {
                             </span>
                         </div>
                         <div className="text-2xl font-bold text-slate-800 mb-2">
-                            4.2m
+                            {dynamicData.ahtTime}m
                         </div>
                         <div className="h-16">
                             <ResponsiveContainer width="100%" height="100%">
@@ -359,7 +425,6 @@ export default function DashboardAnalytics() {
                         </div>
                     </div>
 
-                    {/* NPS Score */}
                     <div className="border border-slate-100 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
@@ -371,14 +436,13 @@ export default function DashboardAnalytics() {
                             <span className="text-xs text-green-600">+0.2</span>
                         </div>
                         <div className="text-2xl font-bold text-slate-800 mb-2">
-                            8.1
+                            {dynamicData.npsScore}
                         </div>
                         <div className="text-xs text-slate-500">
                             Based on 677 responses
                         </div>
                     </div>
 
-                    {/* Escalations */}
                     <div className="border border-slate-100 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
@@ -390,14 +454,13 @@ export default function DashboardAnalytics() {
                             <span className="text-xs text-red-600">+5</span>
                         </div>
                         <div className="text-2xl font-bold text-slate-800 mb-2">
-                            158
+                            {dynamicData.escalations}
                         </div>
                         <div className="text-xs text-slate-500">
                             12.7% of total calls
                         </div>
                     </div>
 
-                    {/* Fall-outs metric card */}
                     <div className="border border-slate-100 rounded-lg p-4">
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
@@ -409,7 +472,7 @@ export default function DashboardAnalytics() {
                             <span className="text-xs text-red-600">+3</span>
                         </div>
                         <div className="text-2xl font-bold text-slate-800 mb-2">
-                            87
+                            {dynamicData.fallouts}
                         </div>
                         <div className="text-xs text-slate-500">
                             7.0% failed handovers
