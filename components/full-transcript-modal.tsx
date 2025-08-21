@@ -1,6 +1,12 @@
 "use client";
 
-import { Bot, MessageCircle, Send, User } from "lucide-react";
+import {
+  Bot,
+  MessageCircle,
+  MessageCircleReply,
+  Send,
+  User,
+} from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -288,8 +294,8 @@ export const FullTranscriptModal = () => {
                             className="h-8 px-3 bg-blue-100 hover:bg-blue-200 text-blue-700 border border-blue-200 shadow-sm"
                             onClick={() => selectPair(customerMsg, agentMsg)}
                           >
-                            <Bot className="h-3 w-3 mr-1" />
-                            AI
+                            <MessageCircleReply className="h-3 w-3 mr-1" />
+                            Review
                           </Button>
                         </div>
                       )}
