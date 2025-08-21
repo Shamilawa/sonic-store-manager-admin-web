@@ -7,18 +7,11 @@ import {
   Filter,
   Headphones,
   FileText,
-  Play,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { FullTranscriptModal } from "./full-transcript-modal";
+import { AudioModalButtons } from "./audio-modal";
+import { MultiSelect } from "./multi-select";
 
 const callHistoryData = [
   {
@@ -83,8 +76,25 @@ const callHistoryData = [
   },
 ];
 
+const ModelOptions = [
+  { value: "vehicles", label: "Vehicles" },
+  { value: "parts", label: "Parts" },
+  { value: "leasing", label: "Leasing" },
+  { value: "repair", label: "Repair" },
+];
+
+const CallStatusOptions = [
+  { value: "live-agent", label: "Live Agent" },
+  { value: "abandoned", label: "Abandoned" },
+  { value: "elead", label: "eLead" },
+];
+
 export default function CallHistoryTable() {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [selectedModelOptions, setSelectedModelOptions] = useState<string[]>(
+    []
+  );
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [callHistoryFilters, setCallHistoryFilters] = useState({
     dateFrom: "",
     dateTo: "",
@@ -107,7 +117,7 @@ export default function CallHistoryTable() {
           <Filter className="h-5 w-5 text-slate-600" />
           <h3 className="text-lg font-bold text-slate-800">Filters</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Date From
@@ -174,66 +184,23 @@ export default function CallHistoryTable() {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Live Agent
+              Conversation Outcome
             </label>
-            <Select
-              value={callHistoryFilters.liveAgentTransfer}
-              onValueChange={(value) =>
-                setCallHistoryFilters((prev) => ({
-                  ...prev,
-                  liveAgentTransfer: value,
-                }))
-              }
-            >
-              <SelectTrigger className="text-sm  w-full">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="Y">Yes</SelectItem>
-                <SelectItem value="N">No</SelectItem>
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={CallStatusOptions}
+              onChange={setSelectedOptions}
+              value={selectedOptions}
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
-              Abandoned
+              Model
             </label>
-            <Select
-              value={callHistoryFilters.abandoned}
-              onValueChange={(value) =>
-                setCallHistoryFilters((prev) => ({ ...prev, abandoned: value }))
-              }
-            >
-              <SelectTrigger className="text-sm  w-full">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="Y">Yes</SelectItem>
-                <SelectItem value="N">No</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              eLead
-            </label>
-            <Select
-              value={callHistoryFilters.eLead}
-              onValueChange={(value) =>
-                setCallHistoryFilters((prev) => ({ ...prev, eLead: value }))
-              }
-            >
-              <SelectTrigger className="text-sm w-full">
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="Y">Yes</SelectItem>
-                <SelectItem value="N">No</SelectItem>
-              </SelectContent>
-            </Select>
+            <MultiSelect
+              options={ModelOptions}
+              onChange={setSelectedModelOptions}
+              value={selectedModelOptions}
+            />
           </div>
         </div>
       </div>
@@ -354,38 +321,7 @@ export default function CallHistoryTable() {
                                 Audio Controls
                               </h4>
                               <div className="space-y-3">
-                                <Button
-                                  variant="outline"
-                                  className="w-full h-14 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 border-blue-200 text-blue-700 font-semibold shadow-sm hover:shadow-md transition-all duration-200 group flex items-center justify-start"
-                                >
-                                  <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full mr-3 group-hover:bg-blue-700 transition-colors">
-                                    <Play className="h-4 w-4 text-white fill-white" />
-                                  </div>
-                                  <div className="text-left">
-                                    <div className="text-sm font-bold">
-                                      Call Recording
-                                    </div>
-                                    <div className="text-xs text-blue-600">
-                                      Full conversation
-                                    </div>
-                                  </div>
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  className="w-full h-14 bg-gradient-to-r from-emerald-50 to-emerald-100 hover:from-emerald-100 hover:to-emerald-200 border-emerald-200 text-emerald-700 font-semibold shadow-sm hover:shadow-md transition-all duration-200 group flex items-center justify-start"
-                                >
-                                  <div className="flex items-center justify-center w-8 h-8 bg-emerald-600 rounded-full mr-3 group-hover:bg-emerald-700 transition-colors">
-                                    <Headphones className="h-4 w-4 text-white" />
-                                  </div>
-                                  <div className="text-left">
-                                    <div className="text-sm font-bold">
-                                      Audio Synopsis
-                                    </div>
-                                    <div className="text-xs text-emerald-600">
-                                      AI-generated summary
-                                    </div>
-                                  </div>
-                                </Button>
+                                <AudioModalButtons />
                                 <FullTranscriptModal />
                               </div>
                             </div>
