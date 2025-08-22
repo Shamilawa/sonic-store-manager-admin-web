@@ -16,10 +16,16 @@ export default function AdminDashboard() {
         setSelectedBranch(branch);
     };
 
+    const handleBrandSelect = (brand: string) => {
+        setSelectedBrand(brand);
+        setSelectedBranch(""); // Clear branch selection when brand is selected
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 flex">
             <SidebarNavigation
                 onBranchSelect={handleBranchSelect}
+                onBrandSelect={handleBrandSelect}
                 selectedBrand={selectedBrand}
                 selectedBranch={selectedBranch}
             />
@@ -32,9 +38,16 @@ export default function AdminDashboard() {
                         <div className="text-sm font-semibold text-slate-800 tracking-wide">
                             <span className="text-blue-600">
                                 {selectedBrand}
-                            </span>{" "}
-                            <span className="text-slate-400">&gt;</span>{" "}
-                            {selectedBranch}
+                            </span>
+                            {selectedBranch && (
+                                <>
+                                    <span className="text-slate-400">
+                                        {" "}
+                                        &gt;{" "}
+                                    </span>
+                                    {selectedBranch}
+                                </>
+                            )}
                         </div>
                         <div className="text-right">
                             <div className="text-sm font-semibold text-slate-800">

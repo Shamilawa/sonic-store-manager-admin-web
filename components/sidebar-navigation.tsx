@@ -25,6 +25,7 @@ interface Brand {
 
 interface SidebarNavigationProps {
     onBranchSelect: (brand: string, branch: string) => void;
+    onBrandSelect: (brand: string) => void;
     selectedBrand: string;
     selectedBranch: string;
 }
@@ -74,6 +75,7 @@ const brandsData: Brand[] = [
 
 export default function SidebarNavigation({
     onBranchSelect,
+    onBrandSelect,
     selectedBrand,
     selectedBranch,
 }: SidebarNavigationProps) {
@@ -90,6 +92,10 @@ export default function SidebarNavigation({
 
     const handleBranchSelect = (brandName: string, branchName: string) => {
         onBranchSelect(brandName, branchName);
+    };
+
+    const handleBrandSelect = (brandName: string) => {
+        onBrandSelect(brandName);
     };
 
     const filteredBrands = brandsData
@@ -148,17 +154,23 @@ export default function SidebarNavigation({
             {/* Navigation */}
             <nav className="flex-1 overflow-y-auto p-4">
                 {/* Current selection indicator */}
-                {selectedBrand && selectedBranch && (
+                {selectedBrand && (
                     <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                         <div className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">
-                            Current Location
+                            Current Selection
                         </div>
                         <div className="text-sm font-semibold text-blue-800">
                             {selectedBrand}
                         </div>
-                        <div className="text-xs text-blue-600">
-                            {selectedBranch}
-                        </div>
+                        {selectedBranch ? (
+                            <div className="text-xs text-blue-600">
+                                {selectedBranch}
+                            </div>
+                        ) : (
+                            <div className="text-xs text-blue-600">
+                                All Locations
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -167,9 +179,15 @@ export default function SidebarNavigation({
                         <div key={brand.id} className="space-y-1">
                             {/* Brand Header */}
                             <button
-                                onClick={() => toggleBrand(brand.id)}
+                                onClick={() => {
+                                    handleBrandSelect(brand.name);
+                                    toggleBrand(brand.id);
+                                }}
                                 className={`w-full flex items-center justify-between py-2 px-1 text-left transition-all duration-150 group cursor-pointer ${
-                                    selectedBrand === brand.name
+                                    selectedBrand === brand.name &&
+                                    !selectedBranch
+                                        ? "text-blue-600 bg-blue-50/50"
+                                        : selectedBrand === brand.name
                                         ? "text-blue-600"
                                         : "text-slate-700 hover:text-blue-600"
                                 }`}
@@ -191,11 +209,17 @@ export default function SidebarNavigation({
                                         </div>
                                     </div>
                                 </div>
-                                {expandedBrands.includes(brand.id) ? (
-                                    <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-all" />
-                                ) : (
-                                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-all" />
-                                )}
+                                <div className="flex items-center space-x-2">
+                                    {selectedBrand === brand.name &&
+                                        !selectedBranch && (
+                                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full flex-shrink-0"></div>
+                                        )}
+                                    {expandedBrands.includes(brand.id) ? (
+                                        <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-all" />
+                                    ) : (
+                                        <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-all" />
+                                    )}
+                                </div>
                             </button>
 
                             {/* Branches */}

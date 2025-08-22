@@ -65,7 +65,8 @@ const generateDynamicData = (brand: string, branch: string) => {
     };
 
     const brandMultiplier = brandMultipliers[brand] || 1.0;
-    const branchMultiplier = branchMultipliers[branch] || 1.0;
+
+    const branchMultiplier = branch ? branchMultipliers[branch] || 1.0 : 3.0;
     const totalMultiplier = brandMultiplier * branchMultiplier;
 
     return {
@@ -275,7 +276,10 @@ export default function DashboardAnalytics({
                         Call Redirections by Category
                     </h3>
                     <div className="text-xs text-slate-600">
-                        Last 30 days • {selectedBrand} - {selectedBranch}
+                        Last 30 days • {selectedBrand}
+                        {selectedBranch
+                            ? ` - ${selectedBranch}`
+                            : " - All Locations"}
                     </div>
                 </div>
 
@@ -375,7 +379,10 @@ export default function DashboardAnalytics({
                     </h3>
                     <div className="flex items-center gap-3">
                         <div className="text-xs text-slate-600">
-                            {selectedBrand} - {selectedBranch}
+                            {selectedBrand}
+                            {selectedBranch
+                                ? ` - ${selectedBranch}`
+                                : " - All Locations"}
                         </div>
                         <Select defaultValue="week">
                             <SelectTrigger className="w-32 h-8 text-xs">
